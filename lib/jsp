@@ -1,0 +1,41 @@
+#! /bin/bash
+# Push-Button Deployment
+# Imprev, Inc.
+# Written by Aaron Robinson
+#
+# json_parser, parses through json files.
+
+# $@ - steps into json file, space separated.
+# Requires MANIFEST environment variable.
+json_parser() {
+	# First make sure python and simplejson are installed, exit otherwise
+	python -c "import simplejson" || { echo "No simplejson" && exit 1; }
+	[ -n "$MANIFEST" ] && jsonfile=$MANIFEST || { echo "MANIFEST not set." && exit 1; }
+	
+	# Initial lines of command
+	local jcmd="import simplejson,sys; "`
+		  	`"myjsonstr = sys.stdin.read(); "`
+		  	`"myjson	  = simplejson.loads(myjsonstr);"
+	
+	# Build python print command based on $@
+	local printcmd="print myjson"
+	for (( argn=1; argn<=$#; argn++ )); do
+		if (( "${!argn}" )) >/dev/null 2>&1; then
+			# If it's an integer, don't wrap with single quotes.
+			local wrapper_char=""
+		else
+			# Otherwise, do.
+			local wrapper_char="'"
+		fi
+		printcmd="$printcmd[$wrapper_char${!argn}$wrapper_char]"
+	done
+	# Run command against MANIFEST file.
+	local result=$(python -c "$jcmd $printcmd.keys()" <$jsonfile 2>/dev/null \
+				|| python -c "$jcmd $printcmd		" <$jsonfile 2>/dev/null)
+	
+	# Strip output so it's more friendly to Bash.
+	echo $result|sed -e "s/[]|[|,|']//g"
+}
+
+# Only actually run command if shell is interactive
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && json_parser $@

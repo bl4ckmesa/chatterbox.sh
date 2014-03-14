@@ -1,32 +1,28 @@
 #! /bin/bash
 
-# File that has all the interesting person information
+SOURCEDIR="/Users/family/svn/chatterbox.sh"
+
+# Source in env
+[ -f "$SOURCEDIR/lib/env" ] && . "$SOURCEDIR/lib/env"
+
+# Source in library
+LIB="$SOURCEDIR/lib"
+[ -d $LIB ] && for lib in $LIB/*; do . $lib; done
+
+# File that tracks the last person to chat with the chatterbox
 export f="/Users/family/.chatterbox"
 [ -f $f ] && . $f
 
-talk() {
-	echo $@
-	say $@ 2>/dev/null
-}
-yesno() {
-	read yesno
-	if [[ "$yesno" =~ (yes|y|Y|Yes) ]]; then
-		return 0
-	else
-		return 1
-	fi
-}
-
 introduction() {
-	talk "Hi there.  What is your name?"
+	chatter "Hi there.  What is your name?"
 	read name
-	talk "Hello $name, it is nice to meet you.  How old are you?"
+	chatter "Hello $name, it is nice to meet you.  How old are you?"
 	read age
 	
 	if [ $age -lt 10 ]; then
-		talk "You seem a little young to be talking to a computer."
+		chatter "You seem a little young to be talking to a computer."
 	else
-		talk "You are such an old person."
+		chatter "You are such an old person."
 	fi
 	>$f
 	echo "chNAME='$name'" >> $f
@@ -34,22 +30,23 @@ introduction() {
 	[ -f $f ] && . $f
 }
 playgame() {
-	talk "Actually, I don't know any games.  Sorry!"
+	chatter "Actually, I don't know any games yet.  Sorry!"
 }
 
+set -e 
 main() {
-	if [ -n $chNAME ]; then
-		talk "I think I know your name.  Is it $chNAME?"
+	if [ -n "$chNAME" ]; then
+		chatter "I think I know your name.  Is it $chNAME?"
 		if yesno; then
-			talk "I'm glad I got it right.  Shall we play a game?"
+			chatter "I'm glad I got it right.  Shall we play a game?"
 			if yesno; then
 				playgame
 			else
-				talk "Well I guess I will talk to you later then.  Bye!"
+				chatter "Well I guess I will talk to you later then.  Bye!"
 				exit 0
 			fi
 		else
-			talk "Oh, I'm sorry."
+			chatter "Oh, I'm sorry."
 			introduction
 			main
 		fi	
@@ -57,6 +54,7 @@ main() {
 		introduction
 		main
 	fi
+	exit 0
 }
 
 main $@

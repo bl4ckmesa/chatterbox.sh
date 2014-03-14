@@ -1,0 +1,4 @@
+#! /bin/bash
+
+DATA="/User/family/tmp/"
+MANIFEST=$DATA/data.json

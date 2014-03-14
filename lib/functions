@@ -1,0 +1,19 @@
+#! /bin/bash
+
+chatter() {
+	echo $@
+	say $@ 2>/dev/null
+}
+yesno() {
+	read yesno
+	if [[ "$yesno" =~ (^yes$|^y$|^Y$|^Yes$) ]]; then
+		return 0
+	elif [[ "$yesno" =~ (^no$|^n$|^N$|^No$) ]]; then
+		return 1
+	else
+		echo "Please answer 'yes' or 'no': "
+		yesno
+		return $?
+	fi
+}
+
