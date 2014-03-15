@@ -2,9 +2,9 @@
 
 introduction() {
 	chatter "Hi there.  What is your name?"
-	read name
+	getinput name
 	chatter "Hello $name, it is nice to meet you.  How old are you?"
-	read age
+	getinput age
 	
 	if [ $age -lt 10 ]; then
 		chatter "You seem a little young to be talking to a computer."
@@ -15,6 +15,17 @@ introduction() {
 	echo "chNAME='$name'" >> $f
 	echo "AGE='$age'" >> $f
 	[ -f $f ] && . $f
+}
+
+getinput() {
+	varname="$@"
+	read input
+	while checkforcommands $input; do
+		echo "Still a command"
+		read input
+	done
+    say -v Junior $input 2>/dev/null
+	eval $varname=\"$input\"
 }
 
 checkforcommands() {
@@ -48,19 +59,17 @@ playgame() {
 
 chatter() {
 	echo $@
-	#say $@ 2>/dev/null
+	say $@ 2>/dev/null
 }
 
 yesno() {
-	read yesno
-	# If it's a command, rerun the query
-	checkforcommands $yesno && yesno
+	getinput yesno
 	if [[ "$yesno" =~ (^yes$|^y$|^Y$|^Yes$) ]]; then
 		return 0
 	elif [[ "$yesno" =~ (^no$|^n$|^N$|^No$) ]]; then
 		return 1
 	else
-		echo "Please answer 'yes' or 'no': "
+		chatter "Please answer 'yes' or 'no': "
 		yesno
 		return $?
 	fi
