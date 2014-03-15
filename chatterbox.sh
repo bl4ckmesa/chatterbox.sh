@@ -13,26 +13,6 @@ LIB="$SOURCEDIR/lib"
 export f="/Users/family/.chatterbox"
 [ -f $f ] && . $f
 
-introduction() {
-	chatter "Hi there.  What is your name?"
-	read name
-	chatter "Hello $name, it is nice to meet you.  How old are you?"
-	read age
-	
-	if [ $age -lt 10 ]; then
-		chatter "You seem a little young to be talking to a computer."
-	else
-		chatter "You are such an old person."
-	fi
-	>$f
-	echo "chNAME='$name'" >> $f
-	echo "AGE='$age'" >> $f
-	[ -f $f ] && . $f
-}
-playgame() {
-	chatter "Actually, I don't know any games yet.  Sorry!"
-}
-
 set -e 
 main() {
 	if [ -n "$chNAME" ]; then

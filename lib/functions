@@ -1,11 +1,60 @@
 #! /bin/bash
 
+introduction() {
+	chatter "Hi there.  What is your name?"
+	read name
+	chatter "Hello $name, it is nice to meet you.  How old are you?"
+	read age
+	
+	if [ $age -lt 10 ]; then
+		chatter "You seem a little young to be talking to a computer."
+	else
+		chatter "You are such an old person."
+	fi
+	>$f
+	echo "chNAME='$name'" >> $f
+	echo "AGE='$age'" >> $f
+	[ -f $f ] && . $f
+}
+
+checkforcommands() {
+	# Check to see if the input is a command.  If so, run the command.
+	# If not, return false and continue
+	cmd=$@
+	case $cmd in
+		exit|quit|leave|bye)
+			chatter "Goodbye!"
+			exit
+		;;
+		randomflag)
+			chatter "Setting Random flag."
+			export RANDOMFLAG=true
+			return 0
+		;;
+		checkrandomflag)
+			chatter "Random flag is currently: $RANDOMFLAG."
+			return 0
+		;;
+		*)
+			# Not a command; return false
+			return 1
+		;;
+	esac
+}
+
+playgame() {
+	chatter "Actually, I don't know any games yet.  Sorry!"
+}
+
 chatter() {
 	echo $@
-	say $@ 2>/dev/null
+	#say $@ 2>/dev/null
 }
+
 yesno() {
 	read yesno
+	# If it's a command, rerun the query
+	checkforcommands $yesno && yesno
 	if [[ "$yesno" =~ (^yes$|^y$|^Y$|^Yes$) ]]; then
 		return 0
 	elif [[ "$yesno" =~ (^no$|^n$|^N$|^No$) ]]; then
