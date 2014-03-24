@@ -1,30 +1,46 @@
 #! /bin/bash
 
-introduction() {
-	chatter "Hi there.  What is your name?"
-	getinput name
-	chatter "Hello $name, it is nice to meet you.  How old are you?"
-	getinput age
+setenv() {
+	# Source in env
+	[ -f "$SOURCEDIR/lib/env" ] && . "$SOURCEDIR/lib/env"
 	
-	if [ $age -lt 10 ]; then
-		chatter "You seem a little young to be talking to a computer."
-	else
-		chatter "You are such an old person."
-	fi
-	>$f
-	echo "chNAME='$name'" >> $f
-	echo "AGE='$age'" >> $f
+	# Source in library
+	LIB="$SOURCEDIR/lib"
+	[ -d $LIB ] && for lib in $LIB/*; do . $lib; done
+	
+	# File that tracks the last person to chat with the chatterbox
+	export f="/Users/family/.chatterbox"
 	[ -f $f ] && . $f
 }
 
+# $1 - Desired variable name/command
+# $2 - [Optional] var type (int|str)
 getinput() {
-	varname="$@"
+	read varname vartype <<< $@
 	read input
+	# Check/run commands until there aren't any left
 	while checkforcommands $input; do
 		echo "Still a command"
 		read input
 	done
+	# Say the input out loud; makes it more conversational
     say -v Junior $input 2>/dev/null
+
+	# Declared variable types
+	if [ -n "$vartype" ]; then
+		# If it's supposed to be an int, make sure it is; otherwise ask again.
+		if [ "$vartype" == "int" ]; then
+			if [[ ! $input =~ ^[0-9]+$ ]]; then
+				chatter "That's not even a number; try again."
+				getinput $varname $vartype
+			elif [ ${#input} -gt 20 ]; then
+				chatter "That number is way too big for me to understand; try again."
+				getinput $varname $vartype
+			fi
+		#elif [ "$vartype" == "str" ]; then
+		fi
+	fi
+
 	eval $varname=\"$input\"
 }
 

@@ -1,19 +1,27 @@
 #! /bin/bash
-
-SOURCEDIR="/Users/family/svn/chatterbox.sh"
-
-# Source in env
-[ -f "$SOURCEDIR/lib/env" ] && . "$SOURCEDIR/lib/env"
-
-# Source in library
-LIB="$SOURCEDIR/lib"
-[ -d $LIB ] && for lib in $LIB/*; do . $lib; done
-
-# File that tracks the last person to chat with the chatterbox
-export f="/Users/family/.chatterbox"
-[ -f $f ] && . $f
-
+# Source in the environments
+SDIR="/Users/family/svn/chatterbox.sh" && . "$SDIR/lib/functions" && setenv || exit 254
 set -e 
+
+introduction() {
+	chatter "Hi there.  What is your name?"
+	getinput name
+	chatter "Hello $name, it is nice to meet you.  How old are you?"
+	getinput age int
+	
+	if [ $age -lt 10 ]; then
+		chatter "You seem a little young to be talking to a computer."
+	elif [ $age -gt 1000 ]; then
+		chatter "There is no way you are that old!  Amazing!"
+	else
+		chatter "You are such an old person."
+	fi
+	>$f
+	echo "chNAME='$name'" >> $f
+	echo "AGE='$age'" >> $f
+	[ -f $f ] && . $f
+}
+
 main() {
 	if [ -n "$chNAME" ]; then
 		chatter "I think I know your name.  Is it $chNAME?"
