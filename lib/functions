@@ -75,7 +75,7 @@ playgame() {
 
 chatter() {
 	echo $@
-	say $@ 2>/dev/null
+	[[ -x /usr/bin/say ]] && /usr/bin/say $@ 2>/dev/null
 }
 
 yesno() {
