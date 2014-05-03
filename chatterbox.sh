@@ -27,12 +27,12 @@ main() {
 		chatter "I think I know your name.  Is it $chNAME?"
 		if yesno; then
 			chatter "I'm glad I got it right.  Shall we play a game?"
-			if yesno; then
+			while yesno; do
 				playgame
-			else
-				chatter "Well I guess I will talk to you later then.  Bye!"
-				exit 0
-			fi
+				chatter "Do you want to keep playing games?"
+			done
+			chatter "Well I guess I will talk to you later then.  Bye!"
+			exit 0
 		else
 			chatter "Oh, I'm sorry."
 			introduction

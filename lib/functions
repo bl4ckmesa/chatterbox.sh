@@ -18,6 +18,9 @@ setenv() {
 getinput() {
 	read varname vartype <<< $@
 	read input
+	while [[ -z "$input" ]]; do
+		read input
+	done
 	# Check/run commands until there aren't any left
 	while checkforcommands $input; do
 		echo "Still a command"
@@ -70,7 +73,11 @@ checkforcommands() {
 }
 
 playgame() {
-	chatter "Actually, I don't know any games yet.  Sorry!"
+	chatter "Well, I only know this one game: Guess the Number.  Do you want to play it?"
+	while yesno; do
+		guessthenumber
+		chatter "Shall we play another?"
+	done
 }
 
 chatter() {
@@ -90,4 +97,31 @@ yesno() {
 		return $?
 	fi
 }
+
+guessthenumber() {
+	chatter "Okay, let's play Guess the Number."
+	chatter "How high do you want to go?"
+	getinput highnumber
+	local number=$(( RANDOM % highnumber + 1 ))
+	chatter "Okay, I'm thinking of a number."
+	getinput guessednumber int
+	local guesses=1
+	while [ "$guessednumber" -ne "$number" ]; do
+		if [ "$guessednumber" -lt "$number" ]; then
+			chatter "That was too low."
+		elif [ "$guessednumber" -gt "$number" ]; then
+			chatter "That was too high."
+		else
+			chatter "Something broke." && exit 1
+		fi		
+		((guesses++))
+		getinput guessednumber int
+	done
+	chatter "That was right!"
+	chatter "You got the answer in $guesses guesses."
+}
+
+
+
+
 
