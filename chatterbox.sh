@@ -1,4 +1,10 @@
 #! /bin/bash
+#
+# ### Custom Commands (commands I wrote for this script.  They live in lib/functions.)
+#   getinput - get user input into given variable (e.g., `getinput name` gives you a name variable)
+#    chatter - print text out to terminal while also saying it out loud (e.g., `chatter "Hello"`)
+#        say - Get input of yes or no.  Used with 'if' (e.g., `if yes; then chatter "Hello"; fi`)
+
 # Source in the environments
 SDIR="/Users/family/svn/chatterbox.sh" && . "$SDIR/lib/functions" && setenv || exit 254
 set -e 
@@ -12,7 +18,7 @@ introduction() {
 	if [ $age -lt 10 ]; then
 		chatter "You seem a little young to be talking to a computer."
 	elif [ $age -gt 1000 ]; then
-		chatter "There is no way you are that old!  Amazing!"
+		chatter "There is no way you are as old as that!  Amazing!"
 	else
 		chatter "You are such an old person."
 	fi
@@ -32,7 +38,7 @@ main() {
 				chatter "Do you want to keep playing games?"
 			done
 			chatter "Well I guess I will talk to you later then.  Bye!"
-			exit 0
+			exit
 		else
 			chatter "Oh, I'm sorry."
 			introduction
@@ -42,7 +48,7 @@ main() {
 		introduction
 		main
 	fi
-	exit 0
+	exit
 }
 
 main $@
