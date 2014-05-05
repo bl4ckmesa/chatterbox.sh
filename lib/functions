@@ -27,7 +27,7 @@ getinput() {
 		read input
 	done
 	# Say the input out loud; makes it more conversational
-    say -v Junior $input 2>/dev/null
+    [[ -x /usr/bin/say && "$NOSAY" == "" ]] && say -v Junior $input 2>/dev/null
 
 	# Declared variable types
 	if [ -n "$vartype" ]; then
@@ -74,7 +74,7 @@ checkforcommands() {
 
 playgame() {
 	chatter "Well, I only know this one game: Guess the Number.  Do you want to play it?"
-	while yesno; do
+	while yes; do
 		guessthenumber
 		chatter "Shall we play another?"
 	done
@@ -82,10 +82,11 @@ playgame() {
 
 chatter() {
 	echo $@
-	[[ -x /usr/bin/say ]] && /usr/bin/say $@ 2>/dev/null
+	[[ -x /usr/bin/say && "$NOSAY" == "" ]] && /usr/bin/say $@ 2>/dev/null
+	return 0 # Make sure it exits this function cleanly
 }
 
-yesno() {
+yes() {
 	getinput yesno
 	if [[ "$yesno" =~ (^yes$|^y$|^Y$|^Yes$) ]]; then
 		return 0

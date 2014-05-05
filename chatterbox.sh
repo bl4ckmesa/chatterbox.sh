@@ -25,9 +25,9 @@ introduction() {
 main() {
 	if [ -n "$chNAME" ]; then
 		chatter "I think I know your name.  Is it $chNAME?"
-		if yesno; then
+		if yes; then
 			chatter "I'm glad I got it right.  Shall we play a game?"
-			while yesno; do
+			while yes; do
 				playgame
 				chatter "Do you want to keep playing games?"
 			done
