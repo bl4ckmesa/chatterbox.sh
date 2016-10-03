@@ -1,8 +1,4 @@
 #! /bin/bash
-# Push-Button Deployment
-# Imprev, Inc.
-# Written by Aaron Robinson
-#
 # json_parser, parses through json files.
 
 # $@ - steps into json file, space separated.
